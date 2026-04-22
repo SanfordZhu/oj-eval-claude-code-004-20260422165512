@@ -168,23 +168,23 @@ int main(){ ios::sync_with_stdio(false); cin.tie(nullptr); ensure_root_account()
                 string arg = (line.size()>5? line.substr(5):""); arg=normalize_spaces(arg);
                 if(arg.empty()){
                     auto v=query_books([](const Book&){return true;});
-                    for(auto &b: v){ cout<<b.isbn<<"\t"<<b.name<<"\t"<<b.author<<"\t"<<b.keyword<<"\t"<<fixed<<setprecision(2)<<b.price<<"\t"<<b.stock<<"\n"; }
+                    if(v.empty()) cout<<"\n"; else for(auto &b: v){ cout<<b.isbn<<"\t"<<b.name<<"\t"<<b.author<<"\t"<<b.keyword<<"\t"<<fixed<<setprecision(2)<<b.price<<"\t"<<b.stock<<"\n"; }
                 } else {
                     auto fail=[&](){ print_invalid(); };
                     if(arg.rfind("-ISBN=",0)==0){ string v=arg.substr(6); if(v.empty()||!is_valid_isbn(v)){ fail(); }
-                        else { auto res=query_books([&](const Book &b){ return string(b.isbn)==v; }); for(auto &b: res){ cout<<b.isbn<<"\t"<<b.name<<"\t"<<b.author<<"\t"<<b.keyword<<"\t"<<fixed<<setprecision(2)<<b.price<<"\t"<<b.stock<<"\n"; } }
+                        else { auto res=query_books([&](const Book &b){ return string(b.isbn)==v; }); if(res.empty()) cout<<"\n"; else for(auto &b: res){ cout<<b.isbn<<"\t"<<b.name<<"\t"<<b.author<<"\t"<<b.keyword<<"\t"<<fixed<<setprecision(2)<<b.price<<"\t"<<b.stock<<"\n"; } }
                     }
                     else if(arg.rfind("-name=\"",0)==0 && arg.size()>=8 && arg.back()=='"'){
                         string v=arg.substr(7, arg.size()-8); if(v.empty()||!is_valid_name_author(v)){ fail(); }
-                        else { auto res=query_books([&](const Book &b){ return string(b.name)==v; }); for(auto &b: res){ cout<<b.isbn<<"\t"<<b.name<<"\t"<<b.author<<"\t"<<b.keyword<<"\t"<<fixed<<setprecision(2)<<b.price<<"\t"<<b.stock<<"\n"; } }
+                        else { auto res=query_books([&](const Book &b){ return string(b.name)==v; }); if(res.empty()) cout<<"\n"; else for(auto &b: res){ cout<<b.isbn<<"\t"<<b.name<<"\t"<<b.author<<"\t"<<b.keyword<<"\t"<<fixed<<setprecision(2)<<b.price<<"\t"<<b.stock<<"\n"; } }
                     }
                     else if(arg.rfind("-author=\"",0)==0 && arg.size()>=10 && arg.back()=='"'){
                         string v=arg.substr(9, arg.size()-10); if(v.empty()||!is_valid_name_author(v)){ fail(); }
-                        else { auto res=query_books([&](const Book &b){ return string(b.author)==v; }); for(auto &b: res){ cout<<b.isbn<<"\t"<<b.name<<"\t"<<b.author<<"\t"<<b.keyword<<"\t"<<fixed<<setprecision(2)<<b.price<<"\t"<<b.stock<<"\n"; } }
+                        else { auto res=query_books([&](const Book &b){ return string(b.author)==v; }); if(res.empty()) cout<<"\n"; else for(auto &b: res){ cout<<b.isbn<<"\t"<<b.name<<"\t"<<b.author<<"\t"<<b.keyword<<"\t"<<fixed<<setprecision(2)<<b.price<<"\t"<<b.stock<<"\n"; } }
                     }
                     else if(arg.rfind("-keyword=\"",0)==0 && arg.size()>=12 && arg.back()=='"'){
                         string v=arg.substr(11, arg.size()-12); if(v.empty()||!is_valid_keyword(v) || keyword_has_multi(v)){ fail(); }
-                        else { auto res=query_books([&](const Book &b){ string kw(b.keyword); vector<string> segs; string cur; for(char c: kw){ if(c=='|'){ if(!cur.empty()) segs.push_back(cur); cur.clear(); } else cur.push_back(c);} if(!cur.empty()) segs.push_back(cur); for(string &s: segs){ if(s==v) return true; } return false; }); for(auto &b: res){ cout<<b.isbn<<"\t"<<b.name<<"\t"<<b.author<<"\t"<<b.keyword<<"\t"<<fixed<<setprecision(2)<<b.price<<"\t"<<b.stock<<"\n"; } }
+                        else { auto res=query_books([&](const Book &b){ string kw(b.keyword); vector<string> segs; string cur; for(char c: kw){ if(c=='|'){ if(!cur.empty()) segs.push_back(cur); cur.clear(); } else cur.push_back(c);} if(!cur.empty()) segs.push_back(cur); for(string &s: segs){ if(s==v) return true; } return false; }); if(res.empty()) cout<<"\n"; else for(auto &b: res){ cout<<b.isbn<<"\t"<<b.name<<"\t"<<b.author<<"\t"<<b.keyword<<"\t"<<fixed<<setprecision(2)<<b.price<<"\t"<<b.stock<<"\n"; } }
                     }
                     else { fail(); }
                 }
